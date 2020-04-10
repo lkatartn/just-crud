@@ -1,0 +1,5 @@
+{
+  "env": {
+    "FAUNDADB_TOKEN": "@faunadb-just-crud-server-token"
+  }
+}
