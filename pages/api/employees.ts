@@ -2,10 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Client, query as fq } from "faunadb";
 import { PAGE_SIZE } from "../../common/pagination";
 
-const client = new Client({ secret: process.env.faunaDbSecret });
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { page = 1 } = req.query;
+  const client = new Client({ secret: process.env.FAUNDADB_TOKEN });
   const response = await client.query(
     fq.Map(
       fq.Paginate(fq.Documents(fq.Collection("employees")), {
