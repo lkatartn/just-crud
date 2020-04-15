@@ -1,32 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import fetch from "unfetch";
 import { useRouter } from "next/router";
-import Modal from "react-modal";
 import { PaginationComponent } from "../components/pagination";
 import { ErrorBox } from "../components/errorBox";
 import { PAGE_SIZE } from "../common/pagination";
 import { EmployeeTable } from "../components/employeeTable";
-import { CreateEmployeeForm } from "../components/createEmployeeForm";
+import { ModalCreateEmployee } from "../components/modalCreateEmployee";
 
-const fetcher = (url) => fetch(url).then((r) => r.json());
-
-const modalCustomStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    padding: "2rem",
-    transform: "translate(-50%, -50%)",
-  },
-};
+const fetcher = (arg1, arg2) => fetch(arg1, arg2).then((r) => r.json());
 
 const Home = () => {
-  useEffect(() => {
-    Modal.setAppElement("#__next");
-  });
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
@@ -59,6 +43,10 @@ const Home = () => {
         </div>
       </div>
       <div className="pure-u-1 pure-u-md-1-6"></div>
+      <ModalCreateEmployee
+        isOpen={modalIsOpen}
+        onRequestClose={() => setIsOpen(false)}
+      />
       <style jsx global>{`
         .content > * + * {
           margin-top: 1em;
@@ -74,21 +62,6 @@ const Home = () => {
           background-color: rgb(102, 127, 153);
         }
       `}</style>
-      <Modal
-        isOpen={modalIsOpen}
-        style={modalCustomStyles}
-        onRequestClose={() => setIsOpen(false)}
-        contentLabel="Create employee"
-      >
-        <CreateEmployeeForm
-          onSubmit={(data) =>
-            fetch("api/employee", {
-              method: "POST",
-              body: JSON.stringify(data),
-            })
-          }
-        />
-      </Modal>
     </div>
   );
 };

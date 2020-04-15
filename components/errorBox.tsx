@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+
 interface Props {
   error: Error;
 }

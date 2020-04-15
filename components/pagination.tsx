@@ -5,47 +5,13 @@ interface Props {
   currentPage: number;
   pagesAmount: number;
 }
-export const PaginationComponent: FunctionComponent<Props> = (props) => {
-  const { currentPage, pagesAmount } = props;
-  const prevPage = currentPage - 1 || 1;
-  const nextPage = currentPage < pagesAmount ? currentPage + 1 : currentPage;
+const Page: FunctionComponent<{ page: number; isCurrent?: boolean }> = ({
+  page,
+  children,
+  isCurrent,
+}) => {
   return (
-    <div>
-      <Link href={{ pathname: "/", query: { page: prevPage } }}>
-        <a className="pure-button page">{` < `}</a>
-      </Link>
-      {Array(props.pagesAmount)
-        .fill(1)
-        .map((_, index) => {
-          if (index + 1 == props.currentPage)
-            return (
-              <a
-                className="pure-button pure-button-disabled page"
-                href="#"
-                key={index}
-              >
-                {index + 1}
-              </a>
-            );
-          return (
-            <Link
-              href={{ pathname: "/", query: { page: index + 1 } }}
-              key={index}
-            >
-              <a className="pure-button page">{index + 1}</a>
-            </Link>
-          );
-        })}
-      <Link
-        href={{
-          pathname: "/",
-          query: {
-            page: nextPage,
-          },
-        }}
-      >
-        <a className="pure-button page">{` > `}</a>
-      </Link>
+    <>
       <style jsx>
         {`
           .page {
@@ -55,6 +21,41 @@ export const PaginationComponent: FunctionComponent<Props> = (props) => {
           }
         `}
       </style>
+      {isCurrent ? (
+        <a className="pure-button pure-button-disabled page" href="#">
+          {children}
+        </a>
+      ) : (
+        <Link href={{ pathname: "/", query: { page } }}>
+          <a className="pure-button page">{children}</a>
+        </Link>
+      )}
+    </>
+  );
+};
+
+export const PaginationComponent: FunctionComponent<Props> = (props) => {
+  const { currentPage, pagesAmount } = props;
+  const prevPage = currentPage - 1 || 1;
+  const nextPage = currentPage < pagesAmount ? currentPage + 1 : currentPage;
+  return (
+    <div>
+      <Page page={prevPage}>{` < `}</Page>
+      {Array(props.pagesAmount)
+        .fill(1)
+        .map((_, index) => {
+          const pageOrder = index + 1;
+          return (
+            <Page
+              page={pageOrder}
+              isCurrent={pageOrder == currentPage}
+              key={index}
+            >
+              {pageOrder}
+            </Page>
+          );
+        })}
+      <Page page={nextPage}>{` > `}</Page>
     </div>
   );
 };
