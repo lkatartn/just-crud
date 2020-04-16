@@ -11,6 +11,7 @@
   "author": "lkatartn@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "cogo-toast": "^4.2.3",
     "faunadb": "^2.13.1",
     "next": "^9.3.4",
     "react": "^16.13.1",

@@ -1,13 +1,31 @@
-import { useForm, ErrorMessage } from "react-hook-form";
-import { Department } from "../common/employeeModel";
+import { useForm } from "react-hook-form";
+import { Department, EmployeeData } from "../common/employeeModel";
+import { FunctionComponent } from "react";
 
-export const CreateEmployeeForm = ({ onSubmit }) => {
+interface CreateEmployeeFormProps {
+  onSubmit: (e: Omit<EmployeeData, "id">) => void;
+}
+
+interface EditEmployeeProps {
+  employee: EmployeeData;
+  onSave: (e: EmployeeData) => void;
+  onCancel: () => void;
+}
+
+type Props = CreateEmployeeFormProps | EditEmployeeProps;
+
+function isCreateForm(a: Props): a is CreateEmployeeFormProps {
+  return !!(a as CreateEmployeeFormProps).onSubmit;
+}
+export const CreateEmployeeForm: FunctionComponent<Props> = (props) => {
   const { register, handleSubmit } = useForm();
 
   return (
     <form
       className="pure-form pure-form-aligned"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(
+        isCreateForm(props) ? props.onSubmit : props.onSave
+      )}
     >
       <div className="pure-control-group">
         <label htmlFor="firstName-input">First Name</label>

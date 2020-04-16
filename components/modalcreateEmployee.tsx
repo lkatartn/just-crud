@@ -1,5 +1,8 @@
 import { useEffect, FunctionComponent } from "react";
 import Modal from "react-modal";
+import { useRouter } from "next/router";
+import { mutate, cache } from "swr";
+import cogoToast from "cogo-toast";
 import { CreateEmployeeForm } from "./createEmployeeForm";
 
 const modalCustomStyles = {
@@ -25,6 +28,9 @@ export const ModalCreateEmployee: FunctionComponent<Props> = (props) => {
     Modal.setAppElement("#__next");
   }, []);
 
+  const router = useRouter();
+  const page = +(router.query.page || 1);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -38,6 +44,18 @@ export const ModalCreateEmployee: FunctionComponent<Props> = (props) => {
             method: "POST",
             body: JSON.stringify(data),
           })
+            .then(() => {
+              cache.clear();
+              return mutate(["/api/employees", page]);
+            })
+            .then(() => {
+              onRequestClose();
+            })
+            .catch((e) => {
+              cogoToast.error(
+                `Error occured while creating new employee ${e.name}: ${e.message}`
+              );
+            })
         }
       />
     </Modal>

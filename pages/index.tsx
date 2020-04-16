@@ -8,14 +8,15 @@ import { PAGE_SIZE } from "../common/pagination";
 import { EmployeeTable } from "../components/employeeTable";
 import { ModalCreateEmployee } from "../components/modalCreateEmployee";
 
-const fetcher = (arg1, arg2) => fetch(arg1, arg2).then((r) => r.json());
+const fetcher = (url, page) =>
+  fetch(`${url}?page=${page}`).then((r) => r.json());
 
 const Home = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
   const page = +(router.query.page || 1);
-  const { data, error } = useSWR(`/api/employees?page=${page}`, fetcher);
+  const { data, error } = useSWR(["/api/employees", page], fetcher);
   const pageAmount = Math.ceil(data?.elementsCount / PAGE_SIZE) || 1;
   return (
     <div className="pure-g">
@@ -31,6 +32,14 @@ const Home = () => {
           >
             Add employee
           </button>
+          <div className="search-form pure-form">
+            <input
+              type="text"
+              className="pure-input"
+              placeholder="Enter employee name"
+            />
+            <button className="pure-button">Search</button>
+          </div>
         </header>
         <div className="content">
           <PaginationComponent pagesAmount={pageAmount} currentPage={page} />
@@ -57,6 +66,9 @@ const Home = () => {
         }
         header > * + * {
           margin-left: 2rem;
+        }
+        .search-form {
+          margin-left: auto;
         }
         .pure-button-primary {
           background-color: rgb(102, 127, 153);
